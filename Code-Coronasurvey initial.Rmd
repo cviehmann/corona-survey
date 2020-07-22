@@ -1,0 +1,32 @@
+---
+title: "Basic Code Corona-Survey"
+output: html_document
+---
+
+Installieren und laden aller relevanten Packages 
+```{r}
+install.packages("foreign", dependencies = TRUE)
+install.packages("reshape", dependencies = TRUE)
+install.packages("tidyverse", dependencies = TRUE)
+install.packages("psych", dependencies = TRUE)
+install.packages("ggplot2", dependencies = TRUE)
+install.packages("car", dependencies = TRUE)
+install.packages("boot", dependencies = TRUE)
+install.packages("lavaan", dependencies = TRUE)
+install.packages("semTools", dependencies = TRUE)
+```
+
+Laden der packages
+
+```{r}
+library(foreign)
+library(reshape)
+library(tidyverse)
+library(psych)
+library(ggplot2)
+library(car)
+library(boot)
+library(lavaan)
+library(semTools)
+```
+

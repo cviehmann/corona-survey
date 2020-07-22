@@ -3,7 +3,7 @@ title: "Basic Code Corona-Survey"
 output: html_document
 ---
 
-Installieren und laden aller relevanten Packages 
+#Installieren und laden aller relevanten Packages 
 ```{r}
 install.packages("foreign", dependencies = TRUE)
 install.packages("reshape", dependencies = TRUE)
@@ -14,9 +14,11 @@ install.packages("car", dependencies = TRUE)
 install.packages("boot", dependencies = TRUE)
 install.packages("lavaan", dependencies = TRUE)
 install.packages("semTools", dependencies = TRUE)
+install.packages("dplyr", dependencies = TRUE)
+install.packages("readxl", dependencies = TRUE)
 ```
 
-Laden der packages
+#Laden der packages
 
 ```{r}
 library(foreign)
@@ -28,5 +30,56 @@ library(car)
 library(boot)
 library(lavaan)
 library(semTools)
+library(readxl)
+library(dplyr)
 ```
+
+#Einlesen von *sav.-Dateien
+```{r}
+coronadata = read.spss("20200518_DATA W1-W2Corona incl Postcode.sav", use.value.labels = F, to.data.frame = T)
+```
+
+#Erstes Pfadmodell - Test 
+
+```{r}
+basic_corona = "
+konstruktiv ~ Info_Q1_7r
+senseocomm ~ konstruktiv + Info_Q1_7r
+"
+
+```
+
+#Ausgabe Pfadmodell 
+
+```{r}
+res_basic_corona = sem(basic_corona, data = coronadata)
+summary(res_basic_corona, standardized = T)
+```
+
+# Indirekte und totale Effekte 
+
+```{r}
+basic_corona_ind= "
+konstruktiv ~ a*Info_Q1_7r
+senseocomm ~ b*konstruktiv + c*Info_Q1_7r
+
+ab := a*b 
+total_effect := c+a*b
+"
+```
+
+#Ausgabe indirekte und totale Effekte 
+
+```{r}
+res_basic_corona_ind = 
+  sem(basic_corona_ind, data=coronadata, se = "bootstrap", bootstrap = 100L, verbose = T)
+
+summary(res_basic_corona_ind, standardized = T, rsquare = T)
+boot.fit = parameterestimates(res_basic_corona_ind, boot.ci.type = "perc", level = 0.95, ci=T, standardized = T)
+boot.fit
+
+```
+
+
+
 

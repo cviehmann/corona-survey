@@ -109,5 +109,28 @@ modindices(res_T1soc_jour, sort. = T)
 
 ```
 
+##Modellversuche - sensocomm, konstruktiv, drama, *single sources* zu W1
 
+```{r}
+T1soc_sing = "
+konstruktiv ~ Info_Q1_1r + Info_Q1_2r + Info_Q1_3r+ Info_Q1_4r + Info_Q1_5r + Info_Q1_6r + Info_Q1_7r + Info_Q1_9r + Info_Q1_10r + Info_Q1_11r +Info_Q1_12r
+drama ~ Info_Q1_1r + Info_Q1_2r + Info_Q1_3r+ Info_Q1_4r + Info_Q1_5r + Info_Q1_6r + Info_Q1_7r + Info_Q1_9r + Info_Q1_10r + Info_Q1_11r +Info_Q1_12r
+konstruktiv ~~drama
+senseocomm ~ Info_Q1_1r + Info_Q1_2r + Info_Q1_3r+ Info_Q1_4r + Info_Q1_5r + Info_Q1_6r + Info_Q1_7r + Info_Q1_9r + Info_Q1_10r + Info_Q1_11r +Info_Q1_12r + drama + konstruktiv
+"
+res_T1soc_sing = sem(T1soc_sing, data = coronadata)
+summary(res_T1soc_sing, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T1soc_sing, sort. = T)
+
+```
+```{r}
+T2soc_core = "
+w2_konstruktiv ~ konstruktiv
+w2_drama ~ drama
+w2_senseocomm ~ senseocomm + konstruktiv + drama + w2_konstruktiv + w2_drama
+"
+res_T2soc_core = sem(T2soc_core, data = coronadata)
+summary(res_T2soc_core, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T2soc_core, sort. = T)
+```
 

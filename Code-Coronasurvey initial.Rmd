@@ -39,7 +39,7 @@ library(dplyr)
 coronadata = read.spss("20200518_DATA W1-W2Corona incl Postcode.sav", use.value.labels = F, to.data.frame = T)
 ```
 
-#Erstes Pfadmodell - Test 
+####Erstes Pfadmodell - Test 
 
 ```{r}
 basic_corona = "
@@ -80,6 +80,34 @@ boot.fit
 
 ```
 
+
+##Modellversuche - sensocomm, konstruktiv, drama, *serioese vs. non-serios* Quellen zu W1
+
+```{r}
+T1soc_ser = "
+konstruktiv ~ Info_ser + Info_nonser
+drama ~ Info_ser + Info_nonser
+konstruktiv ~~drama
+senseocomm ~ Info_ser + Info_nonser + drama + konstruktiv
+"
+res_T1soc_ser = sem(T1soc_ser, data = coronadata)
+summary(res_T1soc_ser, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T1soc_ser, sort. = T)
+```
+##Modellversuche - sensocomm, konstruktiv, drama, *journ. vs. non-journalistische* Quellen zu W1
+
+```{r}
+T1soc_jour = "
+konstruktiv ~ Info_jour + Info_nonjour
+drama ~ Info_jour + Info_nonjour
+konstruktiv ~~drama
+senseocomm ~ Info_jour + Info_nonjour + drama + konstruktiv
+"
+res_T1soc_jour = sem(T1soc_jour, data = coronadata)
+summary(res_T1soc_jour, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T1soc_jour, sort. = T)
+
+```
 
 
 

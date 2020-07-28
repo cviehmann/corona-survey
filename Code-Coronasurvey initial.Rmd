@@ -36,7 +36,7 @@ library(dplyr)
 
 #Einlesen von *sav.-Dateien
 ```{r}
-coronadata = read.spss("20200518_DATA W1-W2Corona incl Postcode.sav", use.value.labels = F, to.data.frame = T)
+coronadata = read.spss("20200728_DATA W1-W2Corona incl Postcode.sav", use.value.labels = F, to.data.frame = T)
 ```
 
 ####Erstes Pfadmodell - Test 
@@ -94,6 +94,8 @@ res_T1soc_ser = sem(T1soc_ser, data = coronadata)
 summary(res_T1soc_ser, standardized = T, rsquare = T, fit.measures = T)
 modindices(res_T1soc_ser, sort. = T)
 ```
+
+
 ##Modellversuche - sensocomm, konstruktiv, drama, *journ. vs. non-journalistische* Quellen zu W1
 
 ```{r}
@@ -123,14 +125,90 @@ summary(res_T1soc_sing, standardized = T, rsquare = T, fit.measures = T)
 modindices(res_T1soc_sing, sort. = T)
 
 ```
+
+#Kernmodell in der Panellogik 
+
 ```{r}
 T2soc_core = "
-w2_konstruktiv ~ konstruktiv
-w2_drama ~ drama
-w2_senseocomm ~ senseocomm + konstruktiv + drama + w2_konstruktiv + w2_drama
+w2_konstruktiv ~ konstruktiv + drama + senseocomm
+w2_drama ~ drama + konstruktiv + senseocomm
+w2_senseocomm ~ senseocomm + konstruktiv + drama
+w2_senseocomm ~~ w2_konstruktiv 
+w2_senseocomm ~~ w2_drama 
+w2_drama ~~ w2_konstruktiv 
+senseocomm ~~ konstruktiv 
+senseocomm ~~ drama 
+drama ~~ konstruktiv 
 "
 res_T2soc_core = sem(T2soc_core, data = coronadata)
 summary(res_T2soc_core, standardized = T, rsquare = T, fit.measures = T)
 modindices(res_T2soc_core, sort. = T)
+```
+
+#Extended in der Panellogik 
+
+```{r}
+T2soc_nonser = "
+w2_konstruktiv ~ konstruktiv + drama + senseocomm + Info_ser + Info_nonser + w2_Info_ser + w2_Info_nonser 
+w2_drama ~ drama + konstruktiv + senseocomm + Info_ser + Info_nonser + w2_Info_ser + w2_Info_nonser  
+w2_senseocomm ~ senseocomm + konstruktiv + drama + Info_ser + Info_nonser + w2_Info_ser + w2_Info_nonser 
+w2_senseocomm ~~ w2_konstruktiv 
+w2_senseocomm ~~ w2_drama 
+w2_drama ~~ w2_konstruktiv 
+senseocomm ~~ konstruktiv 
+senseocomm ~~ drama 
+drama ~~ konstruktiv
+w2_Info_ser ~~ Info_ser 
+w2_Info_nonser ~~ Info_nonser
+w2_Info_ser ~~ w2_senseocomm
+w2_Info_nonser ~~ w2_senseocomm
+
+"
+res_T2soc_nonser = sem(T2soc_nonser, data = coronadata)
+summary(res_T2soc_nonser, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T2soc_nonser, sort. = T)
+```
+
+## Modell mit drei Typen Infoquellen ser, nonser, priv auf senseocomm 
+
+```{r}
+T2soc_info = "
+w2_senseocomm ~ senseocomm + Info_nser + Info_nnonser + Info_priv
+w2_Info_priv ~ Info_priv + senseocomm + Info_nser + Info_nnonser
+w2_Info_nser ~ Info_nser + senseocomm
+w2_Info_nnonser ~ Info_nnonser + senseocomm
+w2_senseocomm ~~ w2_Info_priv
+w2_senseocomm ~~ w2_Info_nser
+w2_senseocomm ~~ w2_Info_nnonser
+w2_Info_nnonser ~~ w2_Info_nser
+w2_Info_nnonser ~~ w2_Info_priv
+Info_nser ~~ Info_priv
+Info_nnonser ~~ Info_nser
+Info_nnonser ~~ Info_priv
+Info_nser ~~ Info_priv
+"
+
+res_T2soc_info = sem(T2soc_info, data = coronadata)
+summary(res_T2soc_info, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T2soc_info, sort. = T)
+```
+
+#Zusammenhänge zwischen den Infoquellen 
+```{r}
+T2info = "
+w2_Info_priv ~ Info_priv + Info_nser + Info_nnonser
+w2_Info_nser ~ Info_nser + Info_nnonser + Info_priv
+w2_Info_nnonser ~ Info_nnonser + Info_nser + Info_priv
+w2_Info_nnonser ~~ w2_Info_nser
+w2_Info_nnonser ~~ w2_Info_priv
+w2_Info_nser ~~ w2_Info_priv
+Info_nser ~~ Info_priv
+Info_nnonser ~~ Info_nser
+Info_nnonser ~~ Info_priv
+"
+
+res_T2info = sem(T2info, data = coronadata)
+summary(res_T2info, standardized = T, rsquare = T, fit.measures = T)
+modindices(res_T2info, sort. = T)
 ```
 
